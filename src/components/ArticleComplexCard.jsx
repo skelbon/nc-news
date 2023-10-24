@@ -13,6 +13,7 @@ import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
 import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import CommentCard from './CommentCard';
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -28,27 +29,53 @@ const ExpandMore = styled((props) => {
 export default function ArticleCard({article, users}) {
 
   const [expanded, setExpanded] = useState(false);
+  const [commentsExpanded, setCommentsExpanded] = useState(false)
   const [fullArticle, setFullArticle] = useState({})
   const [author, setAuthor] = useState({})
+  const [comments, setComments] = useState([])
 
   const date = new Date(article.created_at) 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+  const handleCommentsExpandClick = () => {
+    setCommentsExpanded(!commentsExpanded);
+  };
   
+// TODO Separate network call functions to seperate file
+  const matchAuthor = async ()=>{
+      setAuthor (users.filter((user)=>user.username===article.author)[0])
+  }
+  const fetchFullArticle = async () =>{
+      const articleResponse = await fetch(`https://skelbon-news-api.onrender.com/api/articles/${article.article_id}`)
+      const fullArticle = await articleResponse.json()
+      setFullArticle(fullArticle)
+  }
+  const fetchArticleComments = async () =>{
+      const articleCommentsResponse = await fetch(`https://skelbon-news-api.onrender.com/api/articles/${article.article_id}/comments`)
+      const articleComments = await articleCommentsResponse.json()
+      setComments(await articleComments.comments)
+  }
+
+  const renderOutStuff = ()=>{
+    return (
+      comments.map((comment)=> {
+
+        return (
+          <>
+            <CommentCard comment={comment} users={users}/> 
+            <br />
+          </>
+        )
+      })
+    )
+  }
 
   useEffect (()=>{
-
-    const matchAuthor = async ()=>{
-        setAuthor (users.filter((user)=>user.username===article.author)[0])
-    }
-    const fetchFullArticle = async () =>{
-        const articleResponse = await fetch(`https://skelbon-news-api.onrender.com/api/articles/${article.article_id}`)
-        const fullArticle = await articleResponse.json()
-        setFullArticle(fullArticle)
-    }
      fetchFullArticle()
      matchAuthor()
+     fetchArticleComments()
+     // TODO Error handling 
 }, [])
 
   return (
@@ -93,6 +120,22 @@ export default function ArticleCard({article, users}) {
         <CardContent>
           <Typography paragraph>
           {`${fullArticle.body}`}
+          </Typography>
+        </CardContent>
+      </Collapse>
+      <ExpandMore
+          expand={commentsExpanded}
+          onClick={handleCommentsExpandClick}
+          aria-expanded={commentsExpanded}
+          aria-label="show comments"
+        >
+          <ExpandMoreIcon />
+        </ExpandMore>
+          <Typography variant='caption'>Comments</Typography>
+      <Collapse in={commentsExpanded} timeout="auto" unmountOnExit>
+        <CardContent>
+          <Typography paragraph>
+          {renderOutStuff()}
           </Typography>
         </CardContent>
       </Collapse>
