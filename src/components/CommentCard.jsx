@@ -13,25 +13,22 @@ export default function CommentCard({comment, users}){
     const date = new Date(comment.created_at) 
 
     return (
-        <>
-            <Card key={comment.comment_id} variant='raised'>
-                <CardHeader 
-                avatar={
-                    <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe" src={`${thisUser[0].avatar_url}`}>
-                      {comment.author.charAt(0).toUpperCase()}
-                    </Avatar>
-                  }
-                title={`${comment.author}`}
-                subheader={`Created: ${date.toLocaleDateString()} ${date.toLocaleTimeString()}`}
-                />
-                <CardContent>
-                    <Typography variant='body2'>
-                        {`${comment.body}`}
-                    </Typography>
-                </CardContent>
-            </Card>
-            
-        </>
+        <Card variant='raised'>
+            <CardHeader
+            avatar={
+                <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe" src={`${thisUser[0].avatar_url}`}>
+                    {comment.author.charAt(0).toUpperCase()}
+                </Avatar>
+                }
+            title={`${comment.author}`}
+            subheader={`Created: ${date.toLocaleDateString()} ${date.toLocaleTimeString()}`}
+            />
+            <CardContent>
+                <Typography variant='body2'>
+                    {`${comment.body}`}
+                </Typography>
+            </CardContent>
+        </Card>
     )
 }
 

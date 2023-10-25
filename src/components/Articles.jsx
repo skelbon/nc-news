@@ -1,7 +1,7 @@
 
 import { Typography, Grid } from "@mui/material"
 import { useEffect, useState } from "react"
-import ArticleCard from "./ArticleComplexCard"
+import ArticleCard from "./ArticleCard"
 
 
 import * as React from 'react';
@@ -36,7 +36,7 @@ export default function Articles(){
             articles.map((article)=>{
                 return (
                     <Grid key={article.article_id} item xs={12} sm={12} md={12} lg={12} style={{padding:'3px'}}>
-                        <ArticleCard key={article.article_id + '#'} article={article} users={users}/>
+                        <ArticleCard article={article} users={users}/>
                     </Grid>
                 )
             })

@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useState, Fragment} from 'react';
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import { Chip } from '@mui/material';
@@ -57,12 +57,12 @@ export default function ArticleCard({article, users}) {
   const fetchFullArticle = async () =>{
       const articleResponse = await axios.get(`https://skelbon-news-api.onrender.com/api/articles/${article.article_id}`)
     const fullArticle = await articleResponse.data
-      setFullArticle(await fullArticle)
+      setFullArticle(fullArticle)
   }
   const fetchArticleComments = async () =>{
       const articleCommentsResponse = await axios.get(`https://skelbon-news-api.onrender.com/api/articles/${article.article_id}/comments`)
       const articleComments = await articleCommentsResponse.data
-      setComments(await articleComments.comments)
+      setComments(articleComments.comments)
   }
 
   const handleArticleVote = ()=>{
@@ -78,11 +78,9 @@ export default function ArticleCard({article, users}) {
   }
 
   useEffect (()=>{
-     fetchFullArticle()
-     fetchArticleComments()
-     matchAuthor()
+     Promise.all([fetchFullArticle(), fetchArticleComments(),matchAuthor()])
      // TODO Error handling 
-}, [])
+    }, [])
 
   return (
     <Card sx={{ maxWidth:1200, marginLeft: 'auto', marginRight: 'auto' }}>
@@ -103,7 +101,7 @@ export default function ArticleCard({article, users}) {
         image={`${article.article_img_url}`}
         alt="Article image"
       />
-      <CardContent>
+      <CardContent >
         <Typography variant="h6" color="text.primary">
         {`${article.title}`}
         </Typography>
@@ -131,7 +129,7 @@ export default function ArticleCard({article, users}) {
 
       {isVoteError ? <NetworkAlert message={isVoteError} severity={'warning'} setIsVoteError={setIsVoteError}/> : ''}
       <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
+        <CardContent >
           <Typography paragraph>
           {`${fullArticle.body}`}
           </Typography>
@@ -147,12 +145,13 @@ export default function ArticleCard({article, users}) {
         </ExpandMore>
           <Typography variant='caption'>Comments</Typography>
       <Collapse in={commentsExpanded} timeout="auto" unmountOnExit>
-        <CardContent>
+        <CardContent >
           <Typography >
             {comments.map((comment)=> {
               return (
                 <>
                   <CommentCard key={comment.comment_id} comment={comment} users={users}/>
+                  {console.log(comment.comment_id)}
                   <br />
                 </>
               )
@@ -160,7 +159,6 @@ export default function ArticleCard({article, users}) {
           </Typography>
         </CardContent>
       </Collapse>
-     
     </Card>
   );
 }
