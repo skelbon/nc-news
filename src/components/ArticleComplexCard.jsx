@@ -15,8 +15,9 @@ import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CommentCard from './CommentCard';
 import axios from 'axios';
-import Alert from '@mui/material/Alert';
 import NetworkAlert from './NetworkErrorAlert';
+import CommentTextEntry from './CommentTextEntry';
+
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -54,13 +55,13 @@ export default function ArticleCard({article, users}) {
       setAuthor (users.filter((user)=>user.username===article.author)[0])
   }
   const fetchFullArticle = async () =>{
-      const articleResponse = await fetch(`https://skelbon-news-api.onrender.com/api/articles/${article.article_id}`)
-      const fullArticle = await articleResponse.json()
-      setFullArticle(fullArticle)
+      const articleResponse = await axios.get(`https://skelbon-news-api.onrender.com/api/articles/${article.article_id}`)
+    const fullArticle = await articleResponse.data
+      setFullArticle(await fullArticle)
   }
   const fetchArticleComments = async () =>{
-      const articleCommentsResponse = await fetch(`https://skelbon-news-api.onrender.com/api/articles/${article.article_id}/comments`)
-      const articleComments = await articleCommentsResponse.json()
+      const articleCommentsResponse = await axios.get(`https://skelbon-news-api.onrender.com/api/articles/${article.article_id}/comments`)
+      const articleComments = await articleCommentsResponse.data
       setComments(await articleComments.comments)
   }
 
@@ -75,25 +76,11 @@ export default function ArticleCard({article, users}) {
     
     axios.patch(`https://skelbon-news-api.onrender.com/api/articles/${article.article_id}`, { inc_votes : increment }).catch((err)=>{setIsVoteError('Network error - unable to update vote - try later')})
   }
-  
-  const renderCommentCards = ()=>{
-    return (
-      comments.map((comment)=> {
-
-        return (
-          <>
-            <CommentCard key={comment.comment_id} comment={comment} users={users}/> 
-            <br />
-          </>
-        )
-      })
-    )
-  }
 
   useEffect (()=>{
      fetchFullArticle()
-     matchAuthor()
      fetchArticleComments()
+     matchAuthor()
      // TODO Error handling 
 }, [])
 
@@ -126,7 +113,7 @@ export default function ArticleCard({article, users}) {
           <ThumbUpAltOutlinedIcon color={ hasVoted ? `disabled` : 'enabled'}/>
         </IconButton>
         <Chip label={`Votes: ${articleVotes}`} variant="outlined" />
-        <Typography variant='h6' sx={{marginLeft: 'auto'}}>Read</Typography>
+        <Typography variant='h6' sx={{marginLeft: 'auto', flex : 0}}>Read</Typography>
         <ExpandMore
           sx={{marginLeft: '0'}}
           expand={expanded}
@@ -137,7 +124,12 @@ export default function ArticleCard({article, users}) {
           <ExpandMoreIcon />
         </ExpandMore>
       </CardActions>
-          {isVoteError ? <NetworkAlert message={isVoteError} severity={'warning'} setIsVoteError={setIsVoteError}/> : ''}
+
+      <CardContent>
+          <CommentTextEntry />
+      </CardContent>
+
+      {isVoteError ? <NetworkAlert message={isVoteError} severity={'warning'} setIsVoteError={setIsVoteError}/> : ''}
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           <Typography paragraph>
@@ -156,11 +148,19 @@ export default function ArticleCard({article, users}) {
           <Typography variant='caption'>Comments</Typography>
       <Collapse in={commentsExpanded} timeout="auto" unmountOnExit>
         <CardContent>
-          <Typography paragraph>
-          {renderCommentCards()}
+          <Typography >
+            {comments.map((comment)=> {
+              return (
+                <>
+                  <CommentCard key={comment.comment_id} comment={comment} users={users}/>
+                  <br />
+                </>
+              )
+            })}
           </Typography>
         </CardContent>
       </Collapse>
+     
     </Card>
   );
 }

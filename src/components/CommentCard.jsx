@@ -18,7 +18,7 @@ export default function CommentCard({comment, users}){
                 <CardHeader 
                 avatar={
                     <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe" src={`${thisUser[0].avatar_url}`}>
-                      {/* {article.author.charAt(0).toUpperCase()} */}
+                      {comment.author.charAt(0).toUpperCase()}
                     </Avatar>
                   }
                 title={`${comment.author}`}

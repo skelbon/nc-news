@@ -35,8 +35,8 @@ export default function Articles(){
         {
             articles.map((article)=>{
                 return (
-                    <Grid item xs={12} sm={12} md={12} lg={12} key={article.article_id} style={{padding:'3px'}}>
-                        <ArticleCard article={article} users={users}/>
+                    <Grid key={article.article_id} item xs={12} sm={12} md={12} lg={12} style={{padding:'3px'}}>
+                        <ArticleCard key={article.article_id + '#'} article={article} users={users}/>
                     </Grid>
                 )
             })

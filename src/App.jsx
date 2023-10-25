@@ -1,5 +1,4 @@
-import * as React from 'react'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import './App.css'
 import {Box, CssBaseline, Toolbar} from "@mui/material";
 import ButtonAppBar from './components/NavBar'
@@ -7,14 +6,14 @@ import {Route, Routes} from "react-router-dom";
 import Articles from './components/Articles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import RecipeReviewCard from './components/ArticleComplexCard';
+import Login from './components/Login';
 
 
 function App() {
   
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
-  const theme = React.useMemo(
+  const theme = useMemo(
     () =>
       createTheme({
         palette: {
@@ -24,9 +23,6 @@ function App() {
     [prefersDarkMode],
   );
   
-  
-  const [count, setCount] = useState(0)
-
   return (
     <>
       <ThemeProvider theme={theme}>
@@ -37,6 +33,7 @@ function App() {
         <Toolbar/>
         <Routes>
           <Route path="/" element= {<Articles />}/>
+          <Route path="/login" element= {<Login />}/>
         </Routes>
       </Box>
       </ThemeProvider>
