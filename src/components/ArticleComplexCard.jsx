@@ -14,6 +14,9 @@ import { red } from '@mui/material/colors';
 import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CommentCard from './CommentCard';
+import axios from 'axios';
+import Alert from '@mui/material/Alert';
+import NetworkAlert from './NetworkErrorAlert';
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -33,8 +36,12 @@ export default function ArticleCard({article, users}) {
   const [fullArticle, setFullArticle] = useState({})
   const [author, setAuthor] = useState({})
   const [comments, setComments] = useState([])
-
+  const [articleVotes, setArticleVotes] = useState(article.votes)
+  const [hasVoted, setHasVoted] = useState(false)
+  const [isVoteError, setIsVoteError] = useState(null)
   const date = new Date(article.created_at) 
+  
+  
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
@@ -57,13 +64,25 @@ export default function ArticleCard({article, users}) {
       setComments(await articleComments.comments)
   }
 
-  const renderOutStuff = ()=>{
+  const handleArticleVote = ()=>{
+    let increment 
+    if (hasVoted)
+      increment = -1  
+    else 
+      increment = 1
+    setArticleVotes((currentVote)=> currentVote+increment)
+    setHasVoted((voted)=> !voted)
+    
+    axios.patch(`https://skelbon-news-api.onrender.com/api/articles/${article.article_id}`, { inc_votes : increment }).catch((err)=>{setIsVoteError('Network error - unable to update vote - try later')})
+  }
+  
+  const renderCommentCards = ()=>{
     return (
       comments.map((comment)=> {
 
         return (
           <>
-            <CommentCard comment={comment} users={users}/> 
+            <CommentCard key={comment.comment_id} comment={comment} users={users}/> 
             <br />
           </>
         )
@@ -95,7 +114,7 @@ export default function ArticleCard({article, users}) {
         component="img"
         height="194"
         image={`${article.article_img_url}`}
-        // alt="Paella dish"
+        alt="Article image"
       />
       <CardContent>
         <Typography variant="h6" color="text.primary">
@@ -103,19 +122,22 @@ export default function ArticleCard({article, users}) {
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="up vote article">
-          <ThumbUpAltOutlinedIcon />
+        <IconButton aria-label="up vote article" onClick={handleArticleVote}>
+          <ThumbUpAltOutlinedIcon color={ hasVoted ? `disabled` : 'enabled'}/>
         </IconButton>
-        <Chip label={`Votes: ${fullArticle.votes}`} variant="outlined" />
+        <Chip label={`Votes: ${articleVotes}`} variant="outlined" />
+        <Typography variant='h6' sx={{marginLeft: 'auto'}}>Read</Typography>
         <ExpandMore
+          sx={{marginLeft: '0'}}
           expand={expanded}
           onClick={handleExpandClick}
           aria-expanded={expanded}
           aria-label="show more"
-        >
+          >
           <ExpandMoreIcon />
         </ExpandMore>
       </CardActions>
+          {isVoteError ? <NetworkAlert message={isVoteError} severity={'warning'} setIsVoteError={setIsVoteError}/> : ''}
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           <Typography paragraph>
@@ -135,7 +157,7 @@ export default function ArticleCard({article, users}) {
       <Collapse in={commentsExpanded} timeout="auto" unmountOnExit>
         <CardContent>
           <Typography paragraph>
-          {renderOutStuff()}
+          {renderCommentCards()}
           </Typography>
         </CardContent>
       </Collapse>

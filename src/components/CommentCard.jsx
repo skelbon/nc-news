@@ -4,15 +4,17 @@ import CardHeader from '@mui/material/CardHeader';
 import Avatar from '@mui/material/Avatar';
 import { red } from '@mui/material/colors';
 import { Typography } from '@mui/material';
+
+
+
 export default function CommentCard({comment, users}){
     
     const thisUser = users.filter((user)=>user.username===comment.author)
     const date = new Date(comment.created_at) 
-    console.log(thisUser)
 
     return (
         <>
-            <Card variant='raised'>
+            <Card key={comment.comment_id} variant='raised'>
                 <CardHeader 
                 avatar={
                     <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe" src={`${thisUser[0].avatar_url}`}>
