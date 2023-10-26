@@ -1,24 +1,20 @@
 
-import { Typography, Grid } from "@mui/material"
-import { useEffect, useState } from "react"
+import { Grid } from "@mui/material"
+import { useEffect, useState, useContext } from "react"
 import ArticleCard from "./ArticleCard"
-
-
-import * as React from 'react';
+import { getArticle, getArticles, getUsers } from "../network/network";
+import { UsersContext } from "./contexts";
 export default function Articles(){
     
     const [loading, setLoading] = useState(true);
     const [articles, setArticles] = useState([])
-    const [users, setUsers] = useState({})
+    const {users, setUsers} = useContext(UsersContext)
     
     
     const fetchArticles = async () =>{
-        const articlesResponse = await fetch("https://skelbon-news-api.onrender.com/api/articles")
-        const articles = await articlesResponse.json()
-        const usersResponse = await fetch(`https://skelbon-news-api.onrender.com/api/users`)
-        const users = await usersResponse.json()
-        setUsers(await users)
-        setArticles(articles)
+
+        setUsers(await getUsers())
+        setArticles(await getArticles())
         setLoading(false)
     }
     
@@ -28,14 +24,14 @@ export default function Articles(){
     
     if (loading) return (<div>Loading. Please be patient, this can take a while while the server spins up if it's been idle for a while...</div>)
 
-    
+   
     return (
     <>
         <Grid container spacing={1}>
         {
             articles.map((article)=>{
                 return (
-                    <Grid key={article.article_id} item xs={12} sm={12} md={12} lg={12} style={{padding:'3px'}}>
+                    <Grid key={article.article_id} item xs={12} sm={6} md={6} lg={6} style={{padding:'3px'}}>
                         <ArticleCard article={article} users={users}/>
                     </Grid>
                 )

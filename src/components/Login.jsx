@@ -1,19 +1,27 @@
 import ButtonAppBar from "./NavBar"
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import { UserContext, UsersContext } from "./contexts";
+import { getUsers } from "../network/network";
+import { useNavigate } from 'react-router-dom';
 
-export default function Login({users}){
+export default function Login(){
 
-    const [userName, setUserName] = useState('')
-    
+    const {user, setUser} = useContext(UserContext)
+    const {users, setUsers} = useContext(UsersContext)
+    const navigate = useNavigate()
     const handleChange = (event) => {
-        setAge(event.target.value);
+        setUser(event.target.value);
+        navigate("/")
       }
+    
+    
 
+    console.log(users);
     return (
         <>
         <ButtonAppBar />
@@ -23,13 +31,14 @@ export default function Login({users}){
             <Select
               labelId="select-user-input"
               id="demo-simple-select"
-              value={userName}
+              value={user ? user :'nobody'}
               label="Username"
               onChange={handleChange}
             >
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
+              {users.map((user)=>
+                <MenuItem value={user.username}>{`${user.username}`}</MenuItem>
+              )}
+              
             </Select>
           </FormControl>
         </Box>

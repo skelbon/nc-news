@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useContext} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -7,10 +7,13 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { UserContext } from './contexts';
+
 
 export default function ButtonAppBar() {
   const navigate = useNavigate()
   const [location, setLocation] = useState(useLocation())
+  const {user, setUser} = useContext(UserContext)
 
   useEffect (()=>{
 
@@ -34,11 +37,13 @@ export default function ButtonAppBar() {
           <Button 
             color="inherit"
             onClick={()=>{
-              navigate("/Login")
-              console.log(location)
+              if (!user)
+                navigate("/Login")
+              else
+                setUser(null)
             }}
           >
-            { location.pathname==='/Login' ? 'Logout' : 'Login' }
+            { user ? 'Logout' : 'Login' }
           </Button>
         </Toolbar>
       </AppBar>

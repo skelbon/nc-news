@@ -22,21 +22,25 @@ function App() {
       }),
     [prefersDarkMode],
   );
-  
+
+  const [user, setUser] = useState('')
+  const [users, setUsers] = useState([])
+
+
+
   return (
     <>
-      <ThemeProvider theme={theme}>
-      
-      <CssBaseline/>
-      <ButtonAppBar/>
-      <Box component="main" sx={{p: 3, margin: "auto", padding: "auto", width: "90%", marginTop: 4}}>
-        <Toolbar/>
-        <Routes>
-          <Route path="/" element= {<Articles />}/>
-          <Route path="/login" element= {<Login />}/>
-        </Routes>
-      </Box>
-      </ThemeProvider>
+        <ThemeProvider theme={theme}>
+        <CssBaseline/>
+        <ButtonAppBar/>
+        <Box component="main" sx={{p: 3, margin: "auto", padding: "auto", width: "90%", marginTop: 4}}>
+          <Toolbar/>
+          <Routes>
+            <Route path="/" element= {<Articles />}/>
+            <Route path="/login" element= {<Login />}/>
+          </Routes>
+        </Box>
+        </ThemeProvider>
     </>
   )
 }

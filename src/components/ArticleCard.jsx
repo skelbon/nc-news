@@ -1,4 +1,4 @@
-import {useEffect, useState, Fragment} from 'react';
+import {useEffect, useState, useContext} from 'react';
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import { Chip } from '@mui/material';
@@ -14,9 +14,11 @@ import { red } from '@mui/material/colors';
 import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CommentCard from './CommentCard';
-import axios from 'axios';
-import NetworkAlert from './NetworkErrorAlert';
+import NetworkAlert from '../network/NetworkErrorAlert';
 import CommentTextEntry from './CommentTextEntry';
+import { getArticle, getComments, patchArticleVotes } from '../network/network';
+import { UserContext } from './contexts';
+
 
 
 const ExpandMore = styled((props) => {
@@ -30,8 +32,11 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
+
+
 export default function ArticleCard({article, users}) {
 
+  const {user} = useContext(UserContext)
   const [expanded, setExpanded] = useState(false);
   const [commentsExpanded, setCommentsExpanded] = useState(false)
   const [fullArticle, setFullArticle] = useState({})
@@ -50,19 +55,14 @@ export default function ArticleCard({article, users}) {
     setCommentsExpanded(!commentsExpanded);
   };
   
-// TODO Separate network call functions to seperate file
   const matchAuthor = async ()=>{
       setAuthor (users.filter((user)=>user.username===article.author)[0])
   }
   const fetchFullArticle = async () =>{
-      const articleResponse = await axios.get(`https://skelbon-news-api.onrender.com/api/articles/${article.article_id}`)
-    const fullArticle = await articleResponse.data
-      setFullArticle(fullArticle)
+      setFullArticle(await getArticle(article.article_id))
   }
   const fetchArticleComments = async () =>{
-      const articleCommentsResponse = await axios.get(`https://skelbon-news-api.onrender.com/api/articles/${article.article_id}/comments`)
-      const articleComments = await articleCommentsResponse.data
-      setComments(articleComments.comments)
+      setComments(await getComments(article.article_id))
   }
 
   const handleArticleVote = ()=>{
@@ -73,39 +73,40 @@ export default function ArticleCard({article, users}) {
       increment = 1
     setArticleVotes((currentVote)=> currentVote+increment)
     setHasVoted((voted)=> !voted)
-    
-    axios.patch(`https://skelbon-news-api.onrender.com/api/articles/${article.article_id}`, { inc_votes : increment }).catch((err)=>{setIsVoteError('Network error - unable to update vote - try later')})
+    patchArticleVotes(article.article_id, increment, setIsVoteError)
   }
 
   useEffect (()=>{
      Promise.all([fetchFullArticle(), fetchArticleComments(),matchAuthor()])
-     // TODO Error handling 
     }, [])
 
+  
   return (
-    <Card sx={{ maxWidth:1200, marginLeft: 'auto', marginRight: 'auto' }}>
+    <Card sx={{ maxWidth:1200, minWidth:370, marginLeft: 'auto', marginRight: 'auto' }}>
+      
       <CardHeader
         avatar={
             <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe" src={`${author.avatar_url}`}>
               {article.author.charAt(0).toUpperCase()}
             </Avatar>
           }
-        
         title={`Author: ${article.author}`}
-
         subheader={`Created: ${date.toLocaleDateString()} ${date.toLocaleTimeString()}`}
       />
+      
       <CardMedia
         component="img"
         height="194"
         image={`${article.article_img_url}`}
         alt="Article image"
       />
+      
       <CardContent >
         <Typography variant="h6" color="text.primary">
         {`${article.title}`}
         </Typography>
       </CardContent>
+      
       <CardActions disableSpacing>
         <IconButton aria-label="up vote article" onClick={handleArticleVote}>
           <ThumbUpAltOutlinedIcon color={ hasVoted ? `disabled` : 'enabled'}/>
@@ -124,10 +125,11 @@ export default function ArticleCard({article, users}) {
       </CardActions>
 
       <CardContent>
-          <CommentTextEntry />
+          {user ? <CommentTextEntry /> : ''}
       </CardContent>
 
-      {isVoteError ? <NetworkAlert message={isVoteError} severity={'warning'} setIsVoteError={setIsVoteError}/> : ''}
+      {isVoteError ? <NetworkAlert message={isVoteError} severity={'warning'} setIsVoteError={setIsVoteError} setArticleVotes={setArticleVotes} setHasVoted={setHasVoted}/> : ''}
+      
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent >
           <Typography paragraph>
@@ -141,22 +143,19 @@ export default function ArticleCard({article, users}) {
           aria-expanded={commentsExpanded}
           aria-label="show comments"
         >
-          <ExpandMoreIcon />
-        </ExpandMore>
+        <ExpandMoreIcon />
+      </ExpandMore>
           <Typography variant='caption'>Comments</Typography>
       <Collapse in={commentsExpanded} timeout="auto" unmountOnExit>
         <CardContent >
-          <Typography >
             {comments.map((comment)=> {
               return (
                 <>
                   <CommentCard key={comment.comment_id} comment={comment} users={users}/>
-                  {console.log(comment.comment_id)}
                   <br />
                 </>
               )
             })}
-          </Typography>
         </CardContent>
       </Collapse>
     </Card>

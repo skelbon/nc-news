@@ -5,7 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close';
 
-export default function NetworkAlert({message, severity, setIsVoteError}) {
+export default function NetworkAlert({message, severity, setIsVoteError, setArticleVotes, setHasVoted}) {
   const [open, setOpen] = useState(true);
 
   return (
@@ -21,6 +21,8 @@ export default function NetworkAlert({message, severity, setIsVoteError}) {
               onClick={() => {
                 setOpen(false);
                 setIsVoteError(null)
+                setArticleVotes((currentVotes)=> currentVotes-1)
+                setHasVoted(false)
               }}
             >
               <CloseIcon fontSize="inherit" />
