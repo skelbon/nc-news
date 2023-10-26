@@ -19,9 +19,6 @@ export default function Login(){
         navigate("/")
       }
     
-    
-
-    console.log(users);
     return (
         <>
         <ButtonAppBar />

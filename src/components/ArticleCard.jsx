@@ -56,7 +56,7 @@ export default function ArticleCard({article, users}) {
   };
   
   const matchAuthor = async ()=>{
-      setAuthor (users.filter((user)=>user.username===article.author)[0])
+      setAuthor (users.find((user)=>user.username===article.author))
   }
   const fetchFullArticle = async () =>{
       setFullArticle(await getArticle(article.article_id))
@@ -77,12 +77,14 @@ export default function ArticleCard({article, users}) {
   }
 
   useEffect (()=>{
-     Promise.all([fetchFullArticle(), fetchArticleComments(),matchAuthor()])
+     fetchFullArticle()
+     fetchArticleComments()
+     matchAuthor()
     }, [])
 
   
   return (
-    <Card sx={{ maxWidth:1200, minWidth:370, marginLeft: 'auto', marginRight: 'auto' }}>
+    <Card sx={{ maxWidth:1200, marginLeft: 'auto', marginRight: 'auto' }}>
       
       <CardHeader
         avatar={
@@ -125,7 +127,7 @@ export default function ArticleCard({article, users}) {
       </CardActions>
 
       <CardContent>
-          {user ? <CommentTextEntry /> : ''}
+          {user ? <CommentTextEntry user={user} article_id={article.article_id} setComments={setComments}/> : ''}
       </CardContent>
 
       {isVoteError ? <NetworkAlert message={isVoteError} severity={'warning'} setIsVoteError={setIsVoteError} setArticleVotes={setArticleVotes} setHasVoted={setHasVoted}/> : ''}
@@ -151,7 +153,7 @@ export default function ArticleCard({article, users}) {
             {comments.map((comment)=> {
               return (
                 <>
-                  <CommentCard key={comment.comment_id} comment={comment} users={users}/>
+                  <CommentCard key={comment.comment_id} comment={comment} users={users} comments={comments} setComments={setComments}/>
                   <br />
                 </>
               )
