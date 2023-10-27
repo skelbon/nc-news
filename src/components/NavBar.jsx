@@ -12,7 +12,6 @@ import { UserContext } from './contexts';
 
 export default function NewsAppBar({setDrawerOpen}) {
   const navigate = useNavigate()
-  const [location, setLocation] = useState(useLocation())
   const {user, setUser} = useContext(UserContext)
 
   useEffect (()=>{

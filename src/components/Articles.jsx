@@ -6,24 +6,25 @@ import { getArticles, getUsers } from "../network/network";
 import { UsersContext } from "./contexts";
 
 
-export default function Articles({filter}){
-    
+export default function Articles({filter, sortBy, order}){
+    console.log(filter, sortBy, order)
     const [loading, setLoading] = useState(true);
     const [articles, setArticles] = useState([])
     const {users, setUsers} = useContext(UsersContext)
+ 
     
     
-    
-    const fetchArticles = async (filter) =>{
-
+    const fetchArticles = async (filter, sortBy, order) =>{
+       
         setUsers(await getUsers())
-        setArticles(await getArticles(filter))
+        setArticles(await getArticles(filter, sortBy, order))
         setLoading(false)
     }
     
     useEffect(()=>{
-        fetchArticles(filter)
-    }, [filter])
+        
+        fetchArticles(filter, sortBy, order)
+    }, [filter, sortBy, order])
     
     if (loading) return (<div>Loading. Please be patient, this can take a while while the server spins up if it's been idle for a while...</div>)
 

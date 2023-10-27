@@ -1,8 +1,10 @@
 import axios from "axios";
 
-export const getArticles = async (filter)=>{
-    const topic = filter ? ('?topic=' + filter) : ''
-    const articles = await axios.get(`https://skelbon-news-api.onrender.com/api/articles${topic}`)
+export const getArticles = async (filter, sortBy, order)=>{
+    const topic = filter ? ('?topic=' + filter + '&') : '?'
+ 
+    console.log((`https://skelbon-news-api.onrender.com/api/articles${topic}sort_by=${sortBy}&order=${order}`))
+    const articles = await axios.get(`https://skelbon-news-api.onrender.com/api/articles${topic}sort_by=${sortBy}&order=${order}`)
     return articles.data
 }
 
