@@ -1,7 +1,10 @@
 import axios from "axios";
 
-export const getArticles = async ()=>{
-    const articles = await axios.get("https://skelbon-news-api.onrender.com/api/articles")
+export const getArticles = async (filter, sortBy, order)=>{
+    const topic = filter ? ('?topic=' + filter + '&') : '?'
+ 
+    console.log((`https://skelbon-news-api.onrender.com/api/articles${topic}sort_by=${sortBy}&order=${order}`))
+    const articles = await axios.get(`https://skelbon-news-api.onrender.com/api/articles${topic}sort_by=${sortBy}&order=${order}`)
     return articles.data
 }
 
@@ -12,6 +15,11 @@ export const getArticle = async (article_id)=>{
 export const getUsers = async ()=>{
     const users = await axios.get(`https://skelbon-news-api.onrender.com/api/users`)
     return users.data
+}
+
+export const getTopics = async ()=>{
+    const topics = await axios.get(`https://skelbon-news-api.onrender.com/api/topics`)
+    return topics.data.topics
 }
 
 export const getComments = async (article_id)=>{
