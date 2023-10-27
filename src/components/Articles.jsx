@@ -2,31 +2,35 @@
 import { Grid } from "@mui/material"
 import { useEffect, useState, useContext } from "react"
 import ArticleCard from "./ArticleCard"
-import { getArticle, getArticles, getUsers } from "../network/network";
+import { getArticles, getUsers } from "../network/network";
 import { UsersContext } from "./contexts";
-export default function Articles(){
+
+
+export default function Articles({filter}){
     
     const [loading, setLoading] = useState(true);
     const [articles, setArticles] = useState([])
     const {users, setUsers} = useContext(UsersContext)
     
     
-    const fetchArticles = async () =>{
+    
+    const fetchArticles = async (filter) =>{
 
         setUsers(await getUsers())
-        setArticles(await getArticles())
+        setArticles(await getArticles(filter))
         setLoading(false)
     }
     
     useEffect(()=>{
-        fetchArticles()
-    }, [])
+        fetchArticles(filter)
+    }, [filter])
     
     if (loading) return (<div>Loading. Please be patient, this can take a while while the server spins up if it's been idle for a while...</div>)
 
    
     return (
-    <>
+    <>  
+      
         <Grid container spacing={1}>
         {
             articles.map((article)=>{

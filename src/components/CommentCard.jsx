@@ -24,8 +24,6 @@ export default function CommentCard({comment, users, comments, setComments}){
             const index = comments.findIndex((item)=>comment.comment_id===item.comment_id)
             comments.splice(index,1)
             console.log(comments)
-        
-            
             setComments([...comments])
         }
     }

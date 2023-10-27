@@ -10,7 +10,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { UserContext } from './contexts';
 
 
-export default function ButtonAppBar() {
+export default function NewsAppBar({setDrawerOpen}) {
   const navigate = useNavigate()
   const [location, setLocation] = useState(useLocation())
   const {user, setUser} = useContext(UserContext)
@@ -28,6 +28,7 @@ export default function ButtonAppBar() {
             color="inherit"
             aria-label="menu"
             sx={{ mr: 2 }}
+            onClick={(e)=>setDrawerOpen(true)}
           >
             <MenuIcon />
           </IconButton>
