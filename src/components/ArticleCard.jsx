@@ -84,7 +84,7 @@ export default function ArticleCard({article, users}) {
 
   
   return (
-    <Card sx={{ maxWidth:1200, marginLeft: 'auto', marginRight: 'auto' }}>
+    <Card raised={true} sx={{ maxWidth:1200, marginLeft: 'auto', marginRight: 'auto' }}>
       
       <CardHeader
         avatar={

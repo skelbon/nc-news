@@ -55,6 +55,8 @@ function App() {
             <Route path="/" element= {<Articles filter={null} sortBy={sortBy} order={order}/>}/>
             <Route path="/login" element= {<Login />}/>
             { topics.map((topic) => <Route path={`/${topic.slug}`} element= {<Articles filter={topic.slug} sortBy={sortBy} order={order}/>}/>)}
+            <Route path="/*" element= {<Articles filter={null} sortBy={sortBy} order={order}/>}/>
+
           </Routes>
         </Box>
         </ThemeProvider>

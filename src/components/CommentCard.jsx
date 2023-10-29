@@ -42,7 +42,7 @@ export default function CommentCard({comment, users, comments, setComments}){
     }
     
     return (
-        <Card variant='raised'>
+        <Card raised={false}>
             <CardHeader
             avatar={
                 <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe" src={`${thisUser.avatar_url}`}>
