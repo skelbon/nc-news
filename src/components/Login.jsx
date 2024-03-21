@@ -6,8 +6,8 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { UserContext, UsersContext } from "./contexts";
-import { getUsers } from "../network/network";
 import { useNavigate } from 'react-router-dom';
+import { Typography } from "@mui/material";
 
 export default function Login(){
 
@@ -21,9 +21,11 @@ export default function Login(){
     
     return (
         <>
+        <Typography sx={{paddingBottom: 2}} variant="subtitle2">Pick any one of these demo accounts:</Typography>
+        
         <ButtonAppBar />
         <Box sx={{ minWidth: 120 }}>
-          <FormControl fullWidth>
+          <FormControl sx={{width: 300}}>
             <InputLabel id="demo-simple-select-label">Username</InputLabel>
             <Select
               labelId="select-user-input"

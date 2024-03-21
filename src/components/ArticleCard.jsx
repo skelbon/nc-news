@@ -46,7 +46,7 @@ export default function ArticleCard({article, users}) {
   const [hasVoted, setHasVoted] = useState(false)
   const [isVoteError, setIsVoteError] = useState(null)
   const date = new Date(article.created_at) 
-  
+  date.setFullYear(date.getFullYear() + 3); // let's make it look recent at least
   
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -84,7 +84,7 @@ export default function ArticleCard({article, users}) {
 
   
   return (
-    <Card raised={true} sx={{ maxWidth:1200, marginLeft: 'auto', marginRight: 'auto' }}>
+    <Card key={(article.article_id + ';').toString()} raised={true} sx={{ maxWidth:1200, marginLeft: 'auto', marginRight: 'auto' }}>
       
       <CardHeader
         avatar={

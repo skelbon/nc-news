@@ -11,8 +11,6 @@ import Stack from '@mui/material/Stack';
 
 
 export default function SortBar({sortBy, setSortBy, order, setOrder}) {
-
-
     
     const handleOrderChange = (e)=>{
         setOrder(e.target.value)
@@ -26,8 +24,7 @@ export default function SortBar({sortBy, setSortBy, order, setOrder}) {
         <>
         <Stack 
             direction="row"
-            // spacing={4}
-            // whiteSpace={}
+            sx={{marginBottom: '0'}}
         >
         <FormControl variant='standard' autowidth sx={{minWidth: '120px', marginRight: '20px', marginLeft: 'auto', height: '20px'}}>
             <InputLabel id="demo-simple-select-label">Sort by</InputLabel>

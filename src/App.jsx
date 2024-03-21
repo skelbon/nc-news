@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import './App.css'
 import {Box, CssBaseline, Toolbar} from "@mui/material";
 import NewsAppBar from './components/NavBar'
-import {Route, Routes} from "react-router-dom";
+import {Route, Routes, useLocation} from "react-router-dom";
 import Articles from './components/Articles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -31,16 +31,16 @@ function App() {
   const [topics, setTopics] = useState([])
   const [sortBy, setSortBy] = useState('created_at')
   const [order, setOrder] = useState('DESC')
+  const [location, setLocation] = useState(useLocation())
   
-
   const fetchTopics = async ()=>{
     setTopics(await getTopics())
 
   }
   
   useEffect (()=>{
-    fetchTopics()    
-  }, [])
+    fetchTopics() 
+    }, [])
  
   return (
     <>
@@ -51,7 +51,7 @@ function App() {
         <Box component="main" sx={{p: 3, margin: "auto", padding: "auto", width: "90%", marginTop: 4}}>
           <Toolbar style={{minHeight: 42, marginBottom: '5px'}} />
           <SortBar sortBy={sortBy} setSortBy={setSortBy} order={order} setOrder={setOrder}/>
-          <br />
+          
           <Routes>
             <Route path="/" element= {<Articles filter={null} sortBy={sortBy} order={order}/>}/>
             <Route path="/login" element= {<Login />}/>
